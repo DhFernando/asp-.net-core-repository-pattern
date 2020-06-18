@@ -5,33 +5,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RepositoryPattern.Entities.Contracts;
 using RepositoryPattern.Models;
 
 namespace RepositoryPattern.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        IRepositoryBase _repositoryBase;
+        public HomeController(IRepositoryBase repositoryBase)
         {
-            _logger = logger;
+            this._repositoryBase = repositoryBase;
         }
 
-        public IActionResult Index()
+        public async Task<IEnumerable<User>> Index()
         {
-            return View();
+            return await _repositoryBase.FindAll();
         }
 
-        public IActionResult Privacy()
+        public async Task<IEnumerable<User>> GetUsert()
         {
-            return View();
+            return await _repositoryBase.GetUser("01");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public IActionResult AddUser()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var user = new User() { UserId = "3" , UserBday = "cwo" , UserDep = "cdwj" , UserName = "dw" , UserRole = "CEO"};
+            _repositoryBase.Create(user);
+            return Json("done");    
         }
     }
 }
