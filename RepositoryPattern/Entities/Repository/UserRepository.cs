@@ -8,33 +8,28 @@ using System.Threading.Tasks;
 
 namespace RepositoryPattern.Entities.Repository
 {
-    public class UserRepository : IRepositoryBase
-    {
-        private readonly RepositoryPatternContext _context;
-        public UserRepository(RepositoryPatternContext context)
+    public class UserRepository : RepositoryBase<User> , IUserRepository
+    { 
+        public UserRepository(RepositoryPatternContext context) : base(context) { }
+        public async Task CreateUser(User user)
         {
-            this._context = context;
-        }
-        public  void Create(User user)
-        {
-             _context.Set<User>().Add(user);
-             _context.SaveChanges();
+            await Create(user);
         }
 
-        public void Delete(User user)
+        public async Task DeleteUser(User user)
         {
-            throw new NotImplementedException();
+            await Delete(user);
         }
 
-        public async Task<IEnumerable<User>> FindAll()
+        public async Task<IEnumerable<User>> FindAllUsers()
         {
-            return await _context.Set<User>().ToListAsync();
+            return await FindAll();
         }
 
 
-        public async Task<IQueryable<User>> GetUser(string UserId)
+        public async Task<User> GetUserById(String UserId)
         {
-            return  _context.Set<User>().Where(user => user.UserId==(UserId.ToString()));
+            return await FindByCondition(u => u.UserId.Equals(UserId.ToString())).FirstOrDefaultAsync();
         }
-    }
+    }   
 }

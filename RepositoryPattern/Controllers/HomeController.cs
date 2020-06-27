@@ -12,28 +12,28 @@ namespace RepositoryPattern.Controllers
 {
     public class HomeController : Controller
     {
-        IRepositoryBase _repositoryBase;
-        public HomeController(IRepositoryBase repositoryBase)
+        IUserRepository _repositoryBase;
+        public HomeController(IUserRepository repositoryBase)
         {
             this._repositoryBase = repositoryBase;
         }
 
         public async Task<IEnumerable<User>> Index()
         {
-            return await _repositoryBase.FindAll();
+            return await _repositoryBase.FindAllUsers();
         }
 
-        public async Task<IEnumerable<User>> GetUsert()
+        public async Task<IActionResult> GetUserById()
         {
-            return await _repositoryBase.GetUser("01");
+            return Ok(await _repositoryBase.GetUserById("01"));
         }
 
         [HttpPost]
-        public IActionResult AddUser()
+        public async Task<IActionResult> AddUser()
         {
             var user = new User() { UserId = "3" , UserBday = "cwo" , UserDep = "cdwj" , UserName = "dw" , UserRole = "CEO"};
-            _repositoryBase.Create(user);
-            return Json("done");    
+            await _repositoryBase.CreateUser(user);
+            return Ok(Json("Done"));    
         }
     }
 }
